@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas</title>
+</head>
+<body>
+
+<canvas id="canvas" width="1000" height="1000" />
+</body>
+
+<script >
+var ctx = null;
+var gameInterval = null;
+var spawnInterval = null;
+
+var gameSpeed = 1000 / 140;
+var pawn = null;
+
+var mousePosition = { mouseX: 0, mouseY: 0 };
+
+var gameObjects = [];
+
+window.onload = function() {
+    ctx = canvas.getContext("2d");
+
+    pawn = new Pawn(0,0,50);
+
+    canvas.onmousemove = function(event) {
+        mousePosition = { mouseX: event.pageX, mouseY: event.pageY };
+    }
+
+    gameObjects.push(pawn)
+
+    gameInterval = setInterval(RenderScene,gameSpeed);    
+    spawnInterval = setInterval(spanwFood,2000);//15s
+    spanwFood();
+    RenderScene();
+    eats();
+
+
+    pawn.x = 200;
+    pawn.y = 200;
+};
+
+function RenderScene() {
+    ctx.clearRect(0,0,1000,1000);
+     if(mousePosition.mouseX-pawn.x>=0)
+     {
+      ctx.arc(++pawn.x,pawn.y,50,0,150);
+     }
+
+       if(mousePosition.mouseY-pawn.y>=0)
+       {
+         ctx.arc(pawn.x,++pawn.y,50,0,150);
+       }
+
+       if(mousePosition.mouseX-pawn.x<=0)
+       {
+         ctx.arc(--pawn.x,pawn.y,50,0,150);
+       }
+        if(mousePosition.mouseY-pawn.y<=0)
+       {
+         ctx.arc(pawn.x,--pawn.y,50,0,150);
+       }
+    var length = gameObjects.length;
+    for(var i=0; i<length; i++)
+    {
+        gameObjects[i].render(ctx);
+	if(pawn.x==ctx.x&&pawn.y==ctx.y)
+		{
+			alert("1");
+		}
+     
+    }   
+}
+
+
+function spanwFood() {
+    var foodCount = 60; // random
+    while(foodCount--!=0) {
+        gameObjects.push(new Food(getRndInteger(0,1000),getRndInteger(0,1000)));
+    }
+
+}
+
+function eats(x,y )
+{
+
+		if(pawn.x==ctx.x&&pawn.y==ctx.y)
+		{
+			alert("1");
+		}
+
+
+	
+   
+}
+
+
+
+class GameObject {
+    constructor(x,y) {
+        this.x = x;
+        this.y = y;
+    }
+    
+
+    render(ctx) {}
+}
+
+class Food extends GameObject {
+    render(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,10,0,180);
+       
+        ctx.fill();
+    }
+}
+
+class Pawn extends GameObject {
+    constructor(x,y,size) {
+        super(x,y);
+        this.size = size;
+    }
+    render(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.size,0,180);
+        ctx.fill();
+    }
+}
+
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+
+</script>
+<style >
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+	canvas
+	{
+		border: 40px solid black;
+	}
+</style>
+
+</html>
